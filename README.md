@@ -132,4 +132,4 @@ draw_number("141700")
 
 turtle.done()
 ```
-[Файл с шрифтом](digits.font)
+[Файл с шрифтом](https://raw.githubusercontent.com/cinnabar02/Turtle-Task-2/main/digits.font)
