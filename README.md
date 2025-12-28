@@ -133,3 +133,98 @@ draw_number("141700")
 turtle.done()
 ```
 [Файл с шрифтом](digits.font)
+##
+### Упражнение №4. Идеальный газ
+```python
+import turtle
+import random
+import time
+import math
+
+XMAX, YMAX = 500, 400
+N = 30
+R = 10
+dt = 0.001
+
+screen = turtle.Screen()
+screen.tracer(0)
+
+
+class Particle:
+    def __init__(self):
+        self.t = turtle.Turtle(shape="circle")
+        self.t.penup()
+        self.t.speed(0)
+        self.t.shapesize(R / 10)
+
+        self.x = random.uniform(-XMAX + R, XMAX - R)
+        self.y = random.uniform(-YMAX + R, YMAX - R)
+
+        self.vx = random.uniform(-120, 120)
+        self.vy = random.uniform(-120, 120)
+
+        self.t.goto(self.x, self.y)
+
+    def move(self):
+        self.x += self.vx * dt
+        self.y += self.vy * dt
+
+        if self.x <= -XMAX + R:
+            self.x = -XMAX + R
+            self.vx *= -1
+        if self.x >= XMAX - R:
+            self.x = XMAX - R
+            self.vx *= -1
+
+        if self.y <= -YMAX + R:
+            self.y = -YMAX + R
+            self.vy *= -1
+        if self.y >= YMAX - R:
+            self.y = YMAX - R
+            self.vy *= -1
+
+        self.t.goto(self.x, self.y)
+
+
+def collide(p1, p2):
+    dx = p2.x - p1.x
+    dy = p2.y - p1.y
+    dist = math.hypot(dx, dy)
+
+    if dist == 0 or dist > 2 * R:
+        return
+
+    nx, ny = dx / dist, dy / dist
+
+    overlap = 2 * R - dist
+    p1.x -= nx * overlap / 2
+    p1.y -= ny * overlap / 2
+    p2.x += nx * overlap / 2
+    p2.y += ny * overlap / 2
+
+    dvx = p1.vx - p2.vx
+    dvy = p1.vy - p2.vy
+    vn = dvx * nx + dvy * ny
+
+    if vn > 0:
+        return
+
+    p1.vx -= vn * nx
+    p1.vy -= vn * ny
+    p2.vx += vn * nx
+    p2.vy += vn * ny
+
+
+particles = [Particle() for _ in range(N)]
+
+while True:
+    for p in particles:
+        p.move()
+
+    for i in range(N):
+        for j in range(i + 1, N):
+            collide(particles[i], particles[j])
+
+    screen.update()
+    time.sleep(dt)
+    ```
